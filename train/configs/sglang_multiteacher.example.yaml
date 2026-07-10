@@ -1,0 +1,23 @@
+sglang:
+  - name: actor
+    update_weights: true
+    server_groups:
+      - worker_type: regular
+        num_gpus: 4
+        num_gpus_per_engine: 2
+
+  - name: retool_teacher
+    model_path: /path/to/retool_teacher_hf
+    update_weights: false
+    server_groups:
+      - worker_type: regular
+        num_gpus: 2
+        num_gpus_per_engine: 2
+
+  - name: search_r1_teacher
+    model_path: /path/to/search_r1_teacher_hf
+    update_weights: false
+    server_groups:
+      - worker_type: regular
+        num_gpus: 2
+        num_gpus_per_engine: 2

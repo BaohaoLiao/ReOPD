@@ -1,0 +1,20 @@
+# Shared dependencies for training (train/) and evaluation (eval/).
+# CUDA, PyTorch, Ray, SGLang, and Megatron-LM are intentionally not pinned:
+# they should match your cluster image and the slime checkout in third_party/.
+aiohttp>=3.9.0
+chardet>=5.0.0
+datasets>=2.18.0
+ipykernel>=6.0.0
+jinja2>=3.0.0
+jupyter_client>=8.0.0
+latex2sympy2_extended>=1.0.6
+math-verify>=0.7.0
+numpy>=1.24.0
+pylatexenc>=2.10
+psutil>=5.8.0
+pyarrow>=14.0.0
+pytest>=7.0.0
+sympy>=1.12
+transformers>=4.44.0
+# Retrieval server (eval/search) additionally needs:
+#   faiss-gpu, uvicorn, fastapi  — see eval/search/local_dense_retriever/

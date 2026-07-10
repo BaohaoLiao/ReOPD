@@ -1,0 +1,4 @@
+[submodule "third_party/slime"]
+	path = third_party/slime
+	url = https://github.com/BaohaoLiao/slime.git
+	branch = main
