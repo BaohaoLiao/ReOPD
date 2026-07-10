@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multi-Turn On-Policy Distillation with Prefix Replay</title>
+<meta name="description" content="ReOPD: on-policy distillation for agents without the environment — replay teacher prefixes instead of live rollouts.">
+<meta property="og:title" content="Multi-Turn On-Policy Distillation with Prefix Replay">
+<meta property="og:description" content="ReOPD matches or improves online OPD accuracy with zero tool calls during training and ≥4× faster rollouts.">
+<meta property="og:image" content="static/accuracy_time_toolcall.png">
+<meta property="og:type" content="website">
+<style>
+  :root {
+    --text: #1a1a1a;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --accent: #1d4ed8;
+    --bg: #ffffff;
+    --code-bg: #f6f8fa;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --border: #30363d;
+      --accent: #60a5fa;
+      --bg: #0d1117;
+      --code-bg: #161b22;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.65;
+    font-size: 17px;
+  }
+  .page { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+  .wide { max-width: 62rem; margin-left: auto; margin-right: auto; }
+  h1 { font-size: 2.1rem; line-height: 1.2; text-align: center; margin: 1.6rem 0 0.6rem; letter-spacing: -0.01em; }
+  h2 { font-size: 1.45rem; margin-top: 2.6rem; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
+  h3 { font-size: 1.1rem; margin-top: 1.8rem; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .authors { text-align: center; margin: 0.8rem 0 0.2rem; font-size: 1.02rem; }
+  .authors .author { white-space: nowrap; margin: 0 0.45rem; }
+  .affil { text-align: center; color: var(--muted); font-size: 0.95rem; margin: 0.25rem 0; }
+  .notes { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+  .buttons { display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center; margin: 1.6rem 0 0.5rem; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    border: 1px solid var(--border); border-radius: 999px;
+    padding: 0.42rem 1.05rem; font-size: 0.95rem; font-weight: 500;
+    color: var(--text); background: transparent;
+  }
+  .btn:hover { border-color: var(--accent); text-decoration: none; }
+  .btn svg { width: 1.05em; height: 1.05em; fill: currentColor; }
+  .btn .hf { font-size: 1.05em; }
+  figure { margin: 1.8rem 0; }
+  figure img { width: 100%; height: auto; border-radius: 6px; }
+  figcaption { color: var(--muted); font-size: 0.9rem; margin-top: 0.6rem; line-height: 1.5; }
+  .hero { margin-top: 2rem; }
+  table { border-collapse: collapse; width: 100%; margin: 1.2rem 0; font-size: 0.95rem; }
+  th, td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: center; }
+  th { background: var(--code-bg); }
+  td:first-child, th:first-child { text-align: left; }
+  .best { font-weight: 700; }
+  pre {
+    background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 1rem 1.2rem; overflow-x: auto; font-size: 0.85rem; line-height: 1.5;
+  }
+  code { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; }
+  .kappa { font-style: italic; }
+  .footer { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85rem; text-align: center; }
+  .takeaway {
+    border-left: 3px solid var(--accent); padding: 0.15rem 0 0.15rem 1rem;
+    color: var(--muted); font-size: 1.02rem; margin: 1.4rem 0;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Multi-Turn On-Policy Distillation with Prefix&nbsp;Replay</h1>
+
+  <p class="authors">
+    <span class="author"><a href="https://baohaoliao.github.io/">Baohao Liao</a><sup>*†1,2</sup></span>
+    <span class="author">Hanze Dong<sup>*1</sup></span>
+    <span class="author">Xinxing Xu<sup>1</sup></span>
+    <span class="author">Li Dong<sup>1</sup></span>
+    <span class="author">Christof Monz<sup>2</sup></span>
+    <span class="author">Furu Wei<sup>1</sup></span>
+  </p>
+  <p class="affil"><sup>1</sup>Microsoft Research &nbsp;&nbsp; <sup>2</sup>University of Amsterdam</p>
+  <p class="notes"><sup>*</sup>Equal contribution &nbsp;&nbsp; <sup>†</sup>Work done during an internship at Microsoft</p>
+
+  <div class="buttons">
+    <a class="btn" href="https://arxiv.org/abs/2607.04763">
+      <svg viewBox="0 0 24 24"><path d="M12 2 4 6v12l8 4 8-4V6l-8-4zm0 2.2 5.8 2.9L12 10 6.2 7.1 12 4.2zM6 8.7l5 2.5v7.6l-5-2.5V8.7zm12 0v7.6l-5 2.5v-7.6l5-2.5z"/></svg>
+      Paper
+    </a>
+    <a class="btn" href="https://github.com/BaohaoLiao/ReOPD">
+      <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      Code
+    </a>
+    <a class="btn" href="https://huggingface.co/collections/baohao/reopd">
+      <span class="hf">🤗</span> Models &amp; Data
+    </a>
+  </div>
+
+  <figure class="hero wide">
+    <img src="static/accuracy_time_toolcall.png" alt="ReOPD matches or improves OPD accuracy while training 4–9× faster per rollout step and using zero tool calls during training.">
+    <figcaption><b>ReOPD keeps the benefits of on-policy distillation while removing environment interaction.</b> It matches or improves OPD accuracy, trains much faster per step, and eliminates tool calls during student training by replaying teacher-recorded prefixes instead of executing fresh environment rollouts (student: Qwen3-4B-Instruct-2507, teacher: Qwen3-8B).</figcaption>
+  </figure>
+
+  <h2>Abstract</h2>
+  <p>
+    We study on-policy distillation (OPD) for agentic tasks, where an LLM agent interacts with an
+    environment over multiple turns and a student imitates a teacher over these multi-turn interaction
+    histories. Fully online OPD is costly because each update requires fresh student rollouts through the
+    environment and teacher queries at visited histories. We propose <b>Re</b>played-Prefix <b>O</b>n-<b>P</b>olicy
+    <b>D</b>istillation (<b>ReOPD</b>), an off-environment alternative that reuses pre-collected teacher
+    trajectories as replayed prefixes: the student acts at selected steps, while the teacher provides dense
+    per-step supervision without executing new environment interactions. We show that multi-turn OPD
+    introduces a <i>prefix trap</i>: making histories more student-on-policy improves relevance to the student,
+    but can query the teacher on histories where its target is unreliable. This creates a two-sided
+    distribution shift between student occupancy and teacher reliability. ReOPD addresses this by treating
+    multi-turn OPD as a reliability-aware prefix distribution design and implements it with a simple
+    step-decaying sampling schedule that emphasizes early, lower-shift prefixes. Across mathematical
+    reasoning with Python and search environments over multiple teacher and student model scales, ReOPD
+    preserves or improves OPD-level accuracy, uses zero tool calls during student training, and is at least
+    4× faster per rollout than OPD. ReOPD therefore turns expensive agent-environment interaction into a
+    reusable offline resource, enabling scalable distillation across tools, tasks, and environments.
+  </p>
+
+  <h2>Method</h2>
+  <p class="takeaway">
+    On-policy distillation for agents without the environment: replay teacher prefixes instead of live rollouts.
+  </p>
+  <p>
+    Online OPD (top) keeps the environment alive during the whole training run: every update re-rolls the
+    student through the environment and queries the teacher at each visited history. ReOPD (bottom) replays
+    a <b>teacher-forced prefix</b> from an offline trajectory pool — collected for free while the teacher is
+    trained with RL — and lets the student act only at the supervised step, where the teacher's per-token
+    conditional is the distillation target. No action is ever executed against the environment.
+  </p>
+  <figure class="wide">
+    <img src="static/reopd_overview.png" alt="Comparison between online OPD and ReOPD: ReOPD replays teacher-recorded prefixes from an offline pool and supervises the student's action at each step with step-decaying weights.">
+    <figcaption><b>OPD vs. ReOPD for agentic tasks.</b> Up: OPD with an always-alive online environment, all steps weighted equally. Down: ReOPD with an offline trajectory pool; the environment is only needed when collecting the teacher's trajectories, and earlier steps contribute more to the loss.</figcaption>
+  </figure>
+  <p>
+    Removing the environment does not remove the temporal structure of multi-turn learning. We identify a
+    <b>prefix trap</b> with a two-sided distribution shift: fully student-on-policy prefixes are relevant to
+    the student but can query the teacher where it is unreliable, while teacher-forced prefixes are reliable
+    but less relevant. ReOPD balances the two with a <b>reliability-aware step-decay schedule</b>: supervised
+    positions are sampled with probability <i>p<sub>t</sub></i> ∝ <span class="kappa">κ</span><sup><i>t</i></sup>
+    (<span class="kappa">κ</span> = 0.6), concentrating supervision on early, low-shift prefixes. The decay is
+    applied purely at data-processing time, so the training loss itself stays unchanged.
+  </p>
+  <figure class="wide">
+    <img src="static/multi_env.png" alt="With multiple heterogeneous environments, OPD needs all environments deployed online simultaneously, while ReOPD merges separately collected teacher trajectories into one offline pool.">
+    <figcaption><b>One student, many environments.</b> With OPD, operational complexity grows with the number of live environments. ReOPD collects each teacher's trajectories separately and merges them into a unified offline pool, so a single student can be distilled jointly without keeping any tool online.</figcaption>
+  </figure>
+
+  <h2>Results</h2>
+  <figure class="wide">
+    <img src="static/table4_math.png" alt="Table 4: distillation on mathematical reasoning across teacher scales; ReOPD improves over OPD in every teacher setting.">
+    <figcaption><b>Distillation on mathematical reasoning.</b> Each student is trained and evaluated in the
+    math (Python-tool) environment on six competition benchmarks, under teachers of increasing scale. Across
+    teacher scales, ReOPD improves over student-on-policy OPD — the teacher-reliability regime — and stays
+    close to OPD when the gap is small. GRPO is the teacher's own RL result, shown for reference.</figcaption>
+  </figure>
+  <figure class="wide">
+    <img src="static/table5_search.png" alt="Table 5: distillation on search; ReOPD essentially matches OPD.">
+    <figcaption><b>Distillation on search.</b> Each student is trained and evaluated in the search
+    environment on general-QA and multi-hop-QA benchmarks (<sup>†</sup> in-domain, <sup>*</sup>
+    out-of-domain). The teacher stays in the same Qwen3-4B family and remains reliable on student-induced
+    histories, so the student-occupancy shift dominates and ReOPD essentially matches student-on-policy
+    OPD.</figcaption>
+  </figure>
+  <figure class="wide">
+    <img src="static/table6_multi_env.png" alt="Table 6: multi-environment distillation; a single joint student stays on par with OPD in both domains.">
+    <figcaption><b>Multi-environment distillation: one student for both domains.</b> A single Qwen3-4B
+    student is trained jointly across the math and search environments, distilled from each environment's own
+    RL-trained teacher. The joint student stays on par with student-on-policy OPD in each domain, without
+    keeping any environment online during training.</figcaption>
+  </figure>
+  <p>
+    The results confirm the two regimes predicted by our analysis: ReOPD yields its largest gains when the
+    teacher–student gap is wide (math, e.g. AIME24 28.3 → 36.7 under the Qwen3-8B teacher) and essentially
+    matches student-on-policy OPD when the teacher stays reliable on student-induced histories (search). A
+    single fixed <span class="kappa">κ</span> = 0.6 obtains the regime-appropriate behavior across tasks.
+  </p>
+  <figure>
+    <img src="static/sampling_decay.png" alt="Sweeping the step-decay parameter kappa: a moderate decay outperforms uniform sampling.">
+    <figcaption><b>Favoring early, low-shift steps improves distillation.</b> Applying the step-decay
+    <span class="kappa">κ</span><sup><i>t</i></sup> as the sampling probability, a moderate decay outperforms
+    uniform sampling (<span class="kappa">κ</span> = 1) — the gain comes from reliability-aware prefix
+    selection, not from more data.</figcaption>
+  </figure>
+
+  <h2>BibTeX</h2>
+<pre><code>@misc{liao2026reopd,
+      title={Multi-Turn On-Policy Distillation with Prefix Replay},
+      author={Baohao Liao and Hanze Dong and Xinxing Xu and Li Dong and Christof Monz and Furu Wei},
+      year={2026},
+      eprint={2607.04763},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2607.04763},
+}</code></pre>
+
+  <div class="footer">
+    Code adapted from <a href="https://github.com/THUDM/slime">slime</a>,
+    <a href="https://arxiv.org/abs/2504.11536">ReTool</a>, and
+    <a href="https://github.com/PeterGriffinJin/Search-R1">Search-R1</a>.
+    Page layout inspired by <a href="https://research-template.roman.technology/">Roman Hauksson's template</a>.
+  </div>
+
+</div>
+</body>
+</html>
