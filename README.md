@@ -161,7 +161,7 @@ If you find ReOPD useful, please cite as:
 ```bibtex
 @misc{liao2026reopd,
       title={Multi-Turn On-Policy Distillation with Prefix Replay},
-      author={Baohao Liao and Hanze Dong and Xinxing Xu and Li Dong and Christof Monz and Furu Wei},
+      author={Baohao Liao and Hanze Dong and Christof Monz and Xinxing Xu and Li Dong and Furu Wei},
       year={2026},
       eprint={2607.04763},
       archivePrefix={arXiv},
