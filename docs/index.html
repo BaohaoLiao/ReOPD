@@ -157,22 +157,16 @@
 
   <h2>Abstract</h2>
   <p>
-    We study on-policy distillation (OPD) for agentic tasks, where an LLM agent interacts with an
-    environment over multiple turns and a student imitates a teacher over these multi-turn interaction
-    histories. Fully online OPD is costly because each update requires fresh student rollouts through the
-    environment and teacher queries at visited histories. We propose <b>Re</b>played-Prefix <b>O</b>n-<b>P</b>olicy
-    <b>D</b>istillation (<b>ReOPD</b>), an off-environment alternative that reuses pre-collected teacher
-    trajectories as replayed prefixes: the student acts at selected steps, while the teacher provides dense
-    per-step supervision without executing new environment interactions. We show that multi-turn OPD
-    introduces a <i>prefix trap</i>: making histories more student-on-policy improves relevance to the student,
-    but can query the teacher on histories where its target is unreliable. This creates a two-sided
-    distribution shift between student occupancy and teacher reliability. ReOPD addresses this by treating
-    multi-turn OPD as a reliability-aware prefix distribution design and implements it with a simple
-    step-decaying sampling schedule that emphasizes early, lower-shift prefixes. Across mathematical
-    reasoning with Python and search environments over multiple teacher and student model scales, ReOPD
-    preserves or improves OPD-level accuracy, uses zero tool calls during student training, and is at least
-    4× faster per rollout than OPD. ReOPD therefore turns expensive agent-environment interaction into a
-    reusable offline resource, enabling scalable distillation across tools, tasks, and environments.
+    On-policy distillation (OPD) for agentic tasks is costly: every update rolls the student through a live
+    environment and queries the teacher at each visited history. We propose <b>Re</b>played-Prefix
+    <b>O</b>n-<b>P</b>olicy <b>D</b>istillation (<b>ReOPD</b>), an off-environment alternative that replays
+    pre-collected teacher trajectories as prefixes: the student acts at selected steps and receives dense
+    per-step teacher supervision, with no new environment interaction. Multi-turn OPD faces a <i>prefix
+    trap</i> — a two-sided shift between student occupancy and teacher reliability — which ReOPD resolves
+    with a step-decaying sampling schedule that favors early, lower-shift prefixes. Across math (Python-tool)
+    and search environments and multiple model scales, ReOPD preserves or improves OPD-level accuracy with
+    zero tool calls during training and at least 4× faster rollouts, turning expensive agent-environment
+    interaction into a reusable offline resource.
   </p>
 
   <h2>Method</h2>
