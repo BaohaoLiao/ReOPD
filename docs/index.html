@@ -114,15 +114,45 @@
   .btn .hf { font-size: 1.1em; }
 
   /* ---------- typography ---------- */
+  ::selection { background: color-mix(in srgb, var(--accent) 22%, transparent); }
+  body { counter-reset: sec fig; }
   h2 {
     font-size: 1.5rem; font-weight: 700; letter-spacing: -0.015em;
-    margin: 3rem 0 1rem; padding-bottom: 0.45rem; position: relative;
+    margin: 3.2rem 0 1rem; padding-bottom: 0.45rem; position: relative;
+    counter-increment: sec;
+  }
+  h2::before {
+    content: "0" counter(sec);
+    display: block;
+    font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    margin-bottom: 0.15rem;
   }
   h2::after {
     content: ""; position: absolute; left: 0; bottom: 0;
     width: 3.2rem; height: 3px; border-radius: 2px;
     background: linear-gradient(90deg, var(--accent), var(--accent-2));
   }
+  .lede { font-size: 1.04rem; }
+
+  /* ---------- scroll progress ---------- */
+  .progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0; z-index: 20;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    border-radius: 0 2px 2px 0;
+  }
+
+  /* ---------- hero pill ---------- */
+  .pill {
+    display: table; margin: 0 auto 1.1rem;
+    border: 1px solid var(--border); border-radius: 999px;
+    background: var(--card); box-shadow: var(--shadow);
+    padding: 0.28rem 0.95rem; font-size: 0.8rem; font-weight: 600;
+    color: var(--muted); letter-spacing: 0.02em;
+  }
+  .pill a { color: inherit; }
+  .pill .dot { color: var(--accent-2); margin: 0 0.4rem; }
   h3 { font-size: 1.12rem; font-weight: 700; margin: 2rem 0 0.6rem; letter-spacing: -0.01em; }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
@@ -241,9 +271,11 @@
   root.classList.toggle('dark-active', next === 'dark');
   localStorage.setItem('theme', next);
 "><span class="moon">🌙</span><span class="sun">☀️</span></button>
+<div class="progress" id="progress"></div>
 
 <header class="hero-band">
   <div class="page" style="padding-bottom: 0;">
+    <div class="pill">arXiv 2607.04763<span class="dot">•</span>Microsoft Research × University of Amsterdam</div>
     <h1>Multi-Turn On-Policy Distillation with <span class="grad-text">Prefix&nbsp;Replay</span></h1>
 
     <p class="authors">
@@ -296,7 +328,7 @@
 <div class="page">
 
   <h2>Abstract</h2>
-  <p>
+  <p class="lede">
     On-policy distillation (OPD) for agentic tasks is costly: every update rolls the student through a live
     environment and queries the teacher at each visited history. We propose <b>Re</b>played-Prefix
     <b>O</b>n-<b>P</b>olicy <b>D</b>istillation (<b>ReOPD</b>), an off-environment alternative that replays
@@ -440,6 +472,18 @@
       });
     }, { rootMargin: "0px 0px -8% 0px" });
     els.forEach(function (el) { io.observe(el); });
+  })();
+  // Scroll progress bar.
+  (function () {
+    var bar = document.getElementById("progress");
+    function update() {
+      var h = document.documentElement;
+      var max = h.scrollHeight - h.clientHeight;
+      bar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + "%";
+    }
+    addEventListener("scroll", update, { passive: true });
+    addEventListener("resize", update);
+    update();
   })();
 </script>
 </body>
