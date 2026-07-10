@@ -194,12 +194,16 @@
     matches student-on-policy OPD when the teacher stays reliable on student-induced histories (search). A
     single fixed <span class="kappa">κ</span> = 0.6 obtains the regime-appropriate behavior across tasks.
   </p>
-  <figure>
-    <img src="static/sampling_decay.png" alt="Sweeping the step-decay parameter kappa: a moderate decay outperforms uniform sampling.">
-    <figcaption><b>Favoring early, low-shift steps improves distillation.</b> Applying the step-decay
+  <figure class="wide">
+    <img src="static/fig5_step_schedule.png" alt="Both panels use ReOPD's sampling implementation: (a) drawing supervised positions from early chunks yields the best student; (b) applying the step-decay as the sampling probability, a moderate decay outperforms uniform sampling.">
+    <figcaption><b>Favoring early, low-shift steps improves distillation.</b> Both panels use ReOPD's
+    sampling implementation and put more training mass on early interaction steps, where the student stays
+    close to the teacher and the two-sided shift is small. <b>(a)</b> Sampling by chunk: drawing supervised
+    positions from early chunks yields the best student, and pushing mass to later chunks degrades it.
+    <b>(b)</b> Sampling with decay <span class="kappa">κ</span>: applying the step-decay
     <span class="kappa">κ</span><sup><i>t</i></sup> as the sampling probability, a moderate decay outperforms
-    uniform sampling (<span class="kappa">κ</span> = 1) — the gain comes from reliability-aware prefix
-    selection, not from more data.</figcaption>
+    uniform sampling (<span class="kappa">κ</span> = 1) and tracks the same trend. The student model is
+    Qwen3-4B-Instruct-2507, and the models in the legends are teacher models.</figcaption>
   </figure>
 
   <h2>BibTeX</h2>
