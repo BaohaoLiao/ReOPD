@@ -9,6 +9,7 @@
 <meta property="og:description" content="ReOPD matches or improves online OPD accuracy with zero tool calls during training and ≥4× faster rollouts.">
 <meta property="og:image" content="static/accuracy_time_toolcall.png">
 <meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔁</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -87,6 +88,10 @@
     line-height: 1.2; text-align: center;
     margin: 0 0 1rem; letter-spacing: -0.02em; font-weight: 800;
   }
+  .grad-text {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
   .authors { text-align: center; margin: 1rem 0 0.2rem; font-size: 1.03rem; }
   .authors .author { white-space: nowrap; margin: 0 0.15rem; font-weight: 500; }
   .affil { text-align: center; color: var(--muted); font-size: 0.95rem; margin: 0.35rem 0 0; }
@@ -132,6 +137,23 @@
     margin: 1.4rem 0;
   }
 
+  /* ---------- stats ---------- */
+  .stats {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.9rem;
+    max-width: 54rem; margin: 2.2rem auto 0;
+  }
+  @media (max-width: 40rem) { .stats { grid-template-columns: 1fr; } }
+  .stat {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 1.1rem 1.2rem; text-align: center; box-shadow: var(--shadow);
+  }
+  .stat .num {
+    font-size: 1.9rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .stat .lbl { color: var(--muted); font-size: 0.86rem; margin-top: 0.25rem; line-height: 1.4; }
+
   /* ---------- figures ---------- */
   figure { margin: 2rem 0; }
   figure img {
@@ -139,6 +161,16 @@
     background: #fff; border: 1px solid var(--border);
     border-radius: 12px; padding: 0.9rem;
     box-shadow: var(--shadow);
+    transition: transform .25s ease, box-shadow .25s ease;
+  }
+  figure img:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+
+  /* ---------- reveal on scroll ---------- */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    figure img, .btn, .theme-toggle { transition: none; }
   }
   figcaption {
     color: var(--muted); font-size: 0.88rem; line-height: 1.55;
@@ -212,7 +244,7 @@
 
 <header class="hero-band">
   <div class="page" style="padding-bottom: 0;">
-    <h1>Multi-Turn On-Policy Distillation with Prefix&nbsp;Replay</h1>
+    <h1>Multi-Turn On-Policy Distillation with <span class="grad-text">Prefix&nbsp;Replay</span></h1>
 
     <p class="authors">
       <span class="author"><a href="https://baohaoliao.github.io/" style="color: inherit;">Baohao Liao</a><sup>*†1,2</sup></span>
@@ -243,6 +275,21 @@
       <img src="static/accuracy_time_toolcall.png" alt="ReOPD matches or improves OPD accuracy while training 4–9× faster per rollout step and using zero tool calls during training.">
       <figcaption><b>ReOPD keeps the benefits of on-policy distillation while removing environment interaction.</b> It matches or improves OPD accuracy, trains much faster per step, and eliminates tool calls during student training by replaying teacher-recorded prefixes instead of executing fresh environment rollouts (student: Qwen3-4B-Instruct-2507, teacher: Qwen3-8B).</figcaption>
     </figure>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="num">0</div>
+        <div class="lbl">tool calls during student training</div>
+      </div>
+      <div class="stat">
+        <div class="num">4–9×</div>
+        <div class="lbl">faster per rollout step than online OPD</div>
+      </div>
+      <div class="stat">
+        <div class="num">+2.7</div>
+        <div class="lbl">avg. math accuracy over OPD (Qwen3-8B → 4B)</div>
+      </div>
+    </div>
   </div>
 </header>
 
@@ -373,9 +420,27 @@
     Code adapted from <a href="https://github.com/THUDM/slime">slime</a>,
     <a href="https://arxiv.org/abs/2504.11536">ReTool</a>, and
     <a href="https://github.com/PeterGriffinJin/Search-R1">Search-R1</a>.<br>
-    Page layout inspired by <a href="https://research-template.roman.technology/">Roman Hauksson's template</a>.
+    Page layout inspired by <a href="https://research-template.roman.technology/">Roman Hauksson's template</a>.<br>
+    <a href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">Back to top ↑</a>
   </div>
 
 </div>
+<script>
+  // Gentle reveal-on-scroll for figures and stat cards.
+  (function () {
+    var els = document.querySelectorAll("figure, .stat");
+    els.forEach(function (el) { el.classList.add("reveal"); });
+    if (!("IntersectionObserver" in window)) {
+      els.forEach(function (el) { el.classList.add("in"); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { rootMargin: "0px 0px -8% 0px" });
+    els.forEach(function (el) { io.observe(el); });
+  })();
+</script>
 </body>
 </html>
