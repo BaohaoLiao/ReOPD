@@ -18,8 +18,16 @@
     --bg: #ffffff;
     --code-bg: #f6f8fa;
   }
+  :root[data-theme="dark"] {
+    --text: #e5e7eb;
+    --muted: #9ca3af;
+    --border: #30363d;
+    --accent: #60a5fa;
+    --bg: #0d1117;
+    --code-bg: #161b22;
+  }
   @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-theme="light"]) {
       --text: #e5e7eb;
       --muted: #9ca3af;
       --border: #30363d;
@@ -28,6 +36,18 @@
       --code-bg: #161b22;
     }
   }
+  .theme-toggle {
+    position: fixed; top: 1rem; right: 1rem; z-index: 10;
+    width: 2.4rem; height: 2.4rem; border-radius: 50%;
+    border: 1px solid var(--border); background: var(--bg); color: var(--text);
+    cursor: pointer; font-size: 1.1rem; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .theme-toggle:hover { border-color: var(--accent); }
+  .theme-toggle .sun { display: none; }
+  .theme-toggle .moon { display: inline; }
+  html.dark-active .theme-toggle .sun { display: inline; }
+  html.dark-active .theme-toggle .moon { display: none; }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
@@ -80,8 +100,27 @@
     color: var(--muted); font-size: 1.02rem; margin: 1.4rem 0;
   }
 </style>
+<script>
+  // Apply saved theme before first paint to avoid a flash.
+  (function () {
+    var t = localStorage.getItem("theme");
+    if (t === "dark" || t === "light") {
+      document.documentElement.setAttribute("data-theme", t);
+    }
+    var dark = t === "dark" || (!t && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    document.documentElement.classList.toggle("dark-active", dark);
+  })();
+</script>
 </head>
 <body>
+<button class="theme-toggle" aria-label="Toggle light/dark mode" onclick="
+  var root = document.documentElement;
+  var dark = root.classList.contains('dark-active');
+  var next = dark ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  root.classList.toggle('dark-active', next === 'dark');
+  localStorage.setItem('theme', next);
+"><span class="moon">🌙</span><span class="sun">☀️</span></button>
 <div class="page">
 
   <h1>Multi-Turn On-Policy Distillation with Prefix&nbsp;Replay</h1>
