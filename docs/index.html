@@ -9,96 +9,184 @@
 <meta property="og:description" content="ReOPD matches or improves online OPD accuracy with zero tool calls during training and ≥4× faster rollouts.">
 <meta property="og:image" content="static/accuracy_time_toolcall.png">
 <meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --text: #1a1a1a;
-    --muted: #6b7280;
-    --border: #e5e7eb;
-    --accent: #1d4ed8;
-    --bg: #ffffff;
+    --text: #1b1e24;
+    --muted: #5f6672;
+    --border: #e6e8ec;
+    --accent: #2563eb;
+    --accent-2: #f59e0b;
+    --bg: #fdfdfc;
+    --card: #ffffff;
     --code-bg: #f6f8fa;
+    --shadow: 0 1px 2px rgba(16,24,40,.05), 0 6px 20px -6px rgba(16,24,40,.08);
+    --shadow-lg: 0 2px 4px rgba(16,24,40,.06), 0 14px 34px -10px rgba(16,24,40,.14);
+    --hero-a: rgba(37,99,235,.08);
+    --hero-b: rgba(245,158,11,.09);
   }
   :root[data-theme="dark"] {
-    --text: #e5e7eb;
-    --muted: #9ca3af;
-    --border: #30363d;
-    --accent: #60a5fa;
-    --bg: #0d1117;
+    --text: #e6e8ec;
+    --muted: #9aa3b0;
+    --border: #2d333c;
+    --accent: #7aa5f8;
+    --accent-2: #fbbf24;
+    --bg: #0e1116;
+    --card: #161b22;
     --code-bg: #161b22;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 20px -6px rgba(0,0,0,.5);
+    --shadow-lg: 0 2px 4px rgba(0,0,0,.5), 0 14px 34px -10px rgba(0,0,0,.6);
+    --hero-a: rgba(96,165,250,.07);
+    --hero-b: rgba(251,191,36,.05);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --text: #e5e7eb;
-      --muted: #9ca3af;
-      --border: #30363d;
-      --accent: #60a5fa;
-      --bg: #0d1117;
+      --text: #e6e8ec;
+      --muted: #9aa3b0;
+      --border: #2d333c;
+      --accent: #7aa5f8;
+      --accent-2: #fbbf24;
+      --bg: #0e1116;
+      --card: #161b22;
       --code-bg: #161b22;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 20px -6px rgba(0,0,0,.5);
+      --shadow-lg: 0 2px 4px rgba(0,0,0,.5), 0 14px 34px -10px rgba(0,0,0,.6);
+      --hero-a: rgba(96,165,250,.07);
+      --hero-b: rgba(251,191,36,.05);
     }
   }
-  .theme-toggle {
-    position: fixed; top: 1rem; right: 1rem; z-index: 10;
-    width: 2.4rem; height: 2.4rem; border-radius: 50%;
-    border: 1px solid var(--border); background: var(--bg); color: var(--text);
-    cursor: pointer; font-size: 1.1rem; line-height: 1;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .theme-toggle:hover { border-color: var(--accent); }
-  .theme-toggle .sun { display: none; }
-  .theme-toggle .moon { display: inline; }
-  html.dark-active .theme-toggle .sun { display: inline; }
-  html.dark-active .theme-toggle .moon { display: none; }
+
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     color: var(--text);
     background: var(--bg);
-    line-height: 1.65;
-    font-size: 17px;
+    line-height: 1.7;
+    font-size: 16.5px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
-  .page { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+  .page { max-width: 46rem; margin: 0 auto; padding: 0 1.25rem 4rem; }
   .wide { max-width: 62rem; margin-left: auto; margin-right: auto; }
-  h1 { font-size: 2.1rem; line-height: 1.2; text-align: center; margin: 1.6rem 0 0.6rem; letter-spacing: -0.01em; }
-  h2 { font-size: 1.45rem; margin-top: 2.6rem; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
-  h3 { font-size: 1.1rem; margin-top: 1.8rem; }
+
+  /* ---------- hero ---------- */
+  .hero-band {
+    background:
+      radial-gradient(60rem 26rem at 18% -10%, var(--hero-a), transparent 60%),
+      radial-gradient(52rem 24rem at 85% -12%, var(--hero-b), transparent 60%);
+    border-bottom: 1px solid var(--border);
+    padding: 4.2rem 0 3rem;
+    margin-bottom: 2.6rem;
+  }
+  h1 {
+    font-size: clamp(1.9rem, 4.6vw, 2.6rem);
+    line-height: 1.16; text-align: center;
+    margin: 0 0 1rem; letter-spacing: -0.022em; font-weight: 800;
+  }
+  .authors { text-align: center; margin: 1rem 0 0.2rem; font-size: 1.03rem; }
+  .authors .author { white-space: nowrap; margin: 0 0.5rem; font-weight: 500; }
+  .affil { text-align: center; color: var(--muted); font-size: 0.95rem; margin: 0.35rem 0 0; }
+  .notes { text-align: center; color: var(--muted); font-size: 0.83rem; margin-top: 0.45rem; }
+  sup { font-size: 0.7em; }
+
+  .buttons { display: flex; flex-wrap: wrap; gap: 0.65rem; justify-content: center; margin: 1.8rem 0 0; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    border-radius: 999px; padding: 0.5rem 1.2rem;
+    font-size: 0.95rem; font-weight: 600;
+    color: #fff; background: #1f2328;
+    border: 1px solid transparent;
+    box-shadow: var(--shadow);
+    transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+  :root[data-theme="dark"] .btn, html.dark-active .btn { background: #222933; color: #e6e8ec; border-color: var(--border); }
+  .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); text-decoration: none; }
+  .btn svg { width: 1.05em; height: 1.05em; fill: currentColor; }
+  .btn .hf { font-size: 1.1em; }
+
+  /* ---------- typography ---------- */
+  h2 {
+    font-size: 1.5rem; font-weight: 700; letter-spacing: -0.015em;
+    margin: 3rem 0 1rem; padding-bottom: 0.45rem; position: relative;
+  }
+  h2::after {
+    content: ""; position: absolute; left: 0; bottom: 0;
+    width: 3.2rem; height: 3px; border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  }
+  h3 { font-size: 1.12rem; font-weight: 700; margin: 2rem 0 0.6rem; letter-spacing: -0.01em; }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
-  .authors { text-align: center; margin: 0.8rem 0 0.2rem; font-size: 1.02rem; }
-  .authors .author { white-space: nowrap; margin: 0 0.45rem; }
-  .affil { text-align: center; color: var(--muted); font-size: 0.95rem; margin: 0.25rem 0; }
-  .notes { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
-  .buttons { display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center; margin: 1.6rem 0 0.5rem; }
-  .btn {
-    display: inline-flex; align-items: center; gap: 0.45rem;
-    border: 1px solid var(--border); border-radius: 999px;
-    padding: 0.42rem 1.05rem; font-size: 0.95rem; font-weight: 500;
-    color: var(--text); background: transparent;
-  }
-  .btn:hover { border-color: var(--accent); text-decoration: none; }
-  .btn svg { width: 1.05em; height: 1.05em; fill: currentColor; }
-  .btn .hf { font-size: 1.05em; }
-  figure { margin: 1.8rem 0; }
-  figure img { width: 100%; height: auto; border-radius: 6px; }
-  figcaption { color: var(--muted); font-size: 0.9rem; margin-top: 0.6rem; line-height: 1.5; }
-  .hero { margin-top: 2rem; }
-  table { border-collapse: collapse; width: 100%; margin: 1.2rem 0; font-size: 0.95rem; }
-  th, td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: center; }
-  th { background: var(--code-bg); }
-  td:first-child, th:first-child { text-align: left; }
-  .best { font-weight: 700; }
-  pre {
-    background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px;
-    padding: 1rem 1.2rem; overflow-x: auto; font-size: 0.85rem; line-height: 1.5;
-  }
-  code { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; }
-  .kappa { font-style: italic; }
-  .footer { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85rem; text-align: center; }
+  p { margin: 0.9rem 0; }
+
   .takeaway {
-    border-left: 3px solid var(--accent); padding: 0.15rem 0 0.15rem 1rem;
-    color: var(--muted); font-size: 1.02rem; margin: 1.4rem 0;
+    background: linear-gradient(90deg, var(--hero-a), transparent 70%);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+    padding: 0.85rem 1.1rem;
+    font-size: 1.05rem; font-weight: 500;
+    margin: 1.4rem 0;
   }
+
+  /* ---------- figures ---------- */
+  figure { margin: 2rem 0; }
+  figure img {
+    display: block; width: 100%; height: auto;
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 12px; padding: 0.9rem;
+    box-shadow: var(--shadow);
+  }
+  figcaption {
+    color: var(--muted); font-size: 0.88rem; line-height: 1.55;
+    margin: 0.8rem auto 0; max-width: 46rem; padding: 0 0.2rem;
+  }
+  figcaption b { color: var(--text); }
+  .hero-fig { margin-top: 2.4rem; }
+
+  /* ---------- code ---------- */
+  pre {
+    background: var(--code-bg); border: 1px solid var(--border); border-radius: 12px;
+    padding: 1.1rem 1.25rem; overflow-x: auto; font-size: 0.84rem; line-height: 1.55;
+    box-shadow: var(--shadow);
+  }
+  code { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  .bibbox { position: relative; }
+  .copy-btn {
+    position: absolute; top: 0.65rem; right: 0.65rem;
+    border: 1px solid var(--border); border-radius: 8px;
+    background: var(--card); color: var(--muted);
+    font-size: 0.78rem; font-weight: 600; font-family: inherit;
+    padding: 0.3rem 0.7rem; cursor: pointer;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+  .kappa { font-style: italic; }
+
+  .footer {
+    margin-top: 4.5rem; padding-top: 1.4rem; border-top: 1px solid var(--border);
+    color: var(--muted); font-size: 0.85rem; text-align: center; line-height: 1.8;
+  }
+
+  /* ---------- theme toggle ---------- */
+  .theme-toggle {
+    position: fixed; top: 1rem; right: 1rem; z-index: 10;
+    width: 2.5rem; height: 2.5rem; border-radius: 50%;
+    border: 1px solid var(--border); background: var(--card); color: var(--text);
+    cursor: pointer; font-size: 1.1rem; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .theme-toggle:hover { transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+  .theme-toggle .sun { display: none; }
+  .theme-toggle .moon { display: inline; }
+  html.dark-active .theme-toggle .sun { display: inline; }
+  html.dark-active .theme-toggle .moon { display: none; }
 </style>
 <script>
   // Apply saved theme before first paint to avoid a flash.
@@ -121,39 +209,44 @@
   root.classList.toggle('dark-active', next === 'dark');
   localStorage.setItem('theme', next);
 "><span class="moon">🌙</span><span class="sun">☀️</span></button>
-<div class="page">
 
-  <h1>Multi-Turn On-Policy Distillation with Prefix&nbsp;Replay</h1>
+<header class="hero-band">
+  <div class="page" style="padding-bottom: 0;">
+    <h1>Multi-Turn On-Policy Distillation with Prefix&nbsp;Replay</h1>
 
-  <p class="authors">
-    <span class="author"><a href="https://baohaoliao.github.io/" style="color: inherit;">Baohao Liao</a><sup>*†1,2</sup></span>
-    <span class="author">Hanze Dong<sup>*1</sup></span>
-    <span class="author">Xinxing Xu<sup>1</sup></span>
-    <span class="author">Li Dong<sup>1</sup></span>
-    <span class="author">Christof Monz<sup>2</sup></span>
-    <span class="author">Furu Wei<sup>1</sup></span>
-  </p>
-  <p class="affil"><sup>1</sup>Microsoft Research &nbsp;&nbsp; <sup>2</sup>University of Amsterdam</p>
-  <p class="notes"><sup>*</sup>Equal contribution &nbsp;&nbsp; <sup>†</sup>Work done during an internship at Microsoft</p>
+    <p class="authors">
+      <span class="author"><a href="https://baohaoliao.github.io/" style="color: inherit;">Baohao Liao</a><sup>*†1,2</sup></span>
+      <span class="author">Hanze Dong<sup>*1</sup></span>
+      <span class="author">Xinxing Xu<sup>1</sup></span>
+      <span class="author">Li Dong<sup>1</sup></span>
+      <span class="author">Christof Monz<sup>2</sup></span>
+      <span class="author">Furu Wei<sup>1</sup></span>
+    </p>
+    <p class="affil"><sup>1</sup>Microsoft Research &nbsp;&nbsp; <sup>2</sup>University of Amsterdam</p>
+    <p class="notes"><sup>*</sup>Equal contribution &nbsp;&nbsp; <sup>†</sup>Work done during an internship at Microsoft</p>
 
-  <div class="buttons">
-    <a class="btn" href="https://arxiv.org/abs/2607.04763">
-      <svg viewBox="0 0 24 24"><path d="M12 2 4 6v12l8 4 8-4V6l-8-4zm0 2.2 5.8 2.9L12 10 6.2 7.1 12 4.2zM6 8.7l5 2.5v7.6l-5-2.5V8.7zm12 0v7.6l-5 2.5v-7.6l5-2.5z"/></svg>
-      Paper
-    </a>
-    <a class="btn" href="https://github.com/BaohaoLiao/ReOPD">
-      <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-      Code
-    </a>
-    <a class="btn" href="https://huggingface.co/collections/baohao/reopd">
-      <span class="hf">🤗</span> Models &amp; Data
-    </a>
+    <div class="buttons">
+      <a class="btn" href="https://arxiv.org/abs/2607.04763">
+        <svg viewBox="0 0 24 24"><path d="M12 2 4 6v12l8 4 8-4V6l-8-4zm0 2.2 5.8 2.9L12 10 6.2 7.1 12 4.2zM6 8.7l5 2.5v7.6l-5-2.5V8.7zm12 0v7.6l-5 2.5v-7.6l5-2.5z"/></svg>
+        Paper
+      </a>
+      <a class="btn" href="https://github.com/BaohaoLiao/ReOPD">
+        <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        Code
+      </a>
+      <a class="btn" href="https://huggingface.co/collections/baohao/reopd">
+        <span class="hf">🤗</span> Models &amp; Data
+      </a>
+    </div>
+
+    <figure class="hero-fig wide">
+      <img src="static/accuracy_time_toolcall.png" alt="ReOPD matches or improves OPD accuracy while training 4–9× faster per rollout step and using zero tool calls during training.">
+      <figcaption><b>ReOPD keeps the benefits of on-policy distillation while removing environment interaction.</b> It matches or improves OPD accuracy, trains much faster per step, and eliminates tool calls during student training by replaying teacher-recorded prefixes instead of executing fresh environment rollouts (student: Qwen3-4B-Instruct-2507, teacher: Qwen3-8B).</figcaption>
+    </figure>
   </div>
+</header>
 
-  <figure class="hero wide">
-    <img src="static/accuracy_time_toolcall.png" alt="ReOPD matches or improves OPD accuracy while training 4–9× faster per rollout step and using zero tool calls during training.">
-    <figcaption><b>ReOPD keeps the benefits of on-policy distillation while removing environment interaction.</b> It matches or improves OPD accuracy, trains much faster per step, and eliminates tool calls during student training by replaying teacher-recorded prefixes instead of executing fresh environment rollouts (student: Qwen3-4B-Instruct-2507, teacher: Qwen3-8B).</figcaption>
-  </figure>
+<div class="page">
 
   <h2>Abstract</h2>
   <p>
@@ -258,6 +351,13 @@
   </figure>
 
   <h2>BibTeX</h2>
+  <div class="bibbox">
+    <button class="copy-btn" onclick="
+      var code = this.parentElement.querySelector('code').innerText;
+      navigator.clipboard.writeText(code);
+      var b = this; b.textContent = 'Copied!';
+      setTimeout(function(){ b.textContent = 'Copy'; }, 1600);
+    ">Copy</button>
 <pre><code>@misc{liao2026reopd,
       title={Multi-Turn On-Policy Distillation with Prefix Replay},
       author={Baohao Liao and Hanze Dong and Xinxing Xu and Li Dong and Christof Monz and Furu Wei},
@@ -267,11 +367,12 @@
       primaryClass={cs.LG},
       url={https://arxiv.org/abs/2607.04763},
 }</code></pre>
+  </div>
 
   <div class="footer">
     Code adapted from <a href="https://github.com/THUDM/slime">slime</a>,
     <a href="https://arxiv.org/abs/2504.11536">ReTool</a>, and
-    <a href="https://github.com/PeterGriffinJin/Search-R1">Search-R1</a>.
+    <a href="https://github.com/PeterGriffinJin/Search-R1">Search-R1</a>.<br>
     Page layout inspired by <a href="https://research-template.roman.technology/">Roman Hauksson's template</a>.
   </div>
 
