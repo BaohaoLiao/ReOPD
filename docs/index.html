@@ -94,6 +94,8 @@
   }
   .authors { text-align: center; margin: 1rem 0 0.2rem; font-size: 1.03rem; }
   .authors .author { white-space: nowrap; margin: 0 0.15rem; font-weight: 500; }
+  .authors a { color: inherit; }
+  .authors a:hover { color: var(--accent); }
   .affil { text-align: center; color: var(--muted); font-size: 0.95rem; margin: 0.35rem 0 0; }
   .notes { text-align: center; color: var(--muted); font-size: 0.83rem; margin-top: 0.45rem; }
   sup { font-size: 0.7em; }
@@ -115,19 +117,9 @@
 
   /* ---------- typography ---------- */
   ::selection { background: color-mix(in srgb, var(--accent) 22%, transparent); }
-  body { counter-reset: sec fig; }
   h2 {
     font-size: 1.5rem; font-weight: 700; letter-spacing: -0.015em;
     margin: 3.2rem 0 1rem; padding-bottom: 0.45rem; position: relative;
-    counter-increment: sec;
-  }
-  h2::before {
-    content: "0" counter(sec);
-    display: block;
-    font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em;
-    background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-    margin-bottom: 0.15rem;
   }
   h2::after {
     content: ""; position: absolute; left: 0; bottom: 0;
@@ -279,12 +271,12 @@
     <h1>Multi-Turn On-Policy Distillation with <span class="grad-text">Prefix&nbsp;Replay</span></h1>
 
     <p class="authors">
-      <span class="author"><a href="https://baohaoliao.github.io/" style="color: inherit;">Baohao Liao</a><sup>*†1,2</sup></span>
-      <span class="author">Hanze Dong<sup>*1</sup></span>
-      <span class="author">Christof Monz<sup>2</sup></span>
-      <span class="author">Xinxing Xu<sup>1</sup></span>
-      <span class="author">Li Dong<sup>1</sup></span>
-      <span class="author">Furu Wei<sup>1</sup></span>
+      <span class="author"><a href="https://scholar.google.com/citations?user=Fbys5c8AAAAJ">Baohao Liao</a><sup>*†1,2</sup></span>
+      <span class="author"><a href="https://scholar.google.com/citations?user=g9WLzWoAAAAJ">Hanze Dong</a><sup>*1</sup></span>
+      <span class="author"><a href="https://scholar.google.com/citations?user=0r3PWLQAAAAJ">Christof Monz</a><sup>2</sup></span>
+      <span class="author"><a href="https://scholar.google.com/citations?user=neFbpuEAAAAJ">Xinxing Xu</a><sup>1</sup></span>
+      <span class="author"><a href="https://scholar.google.com/citations?user=wEfQgPgAAAAJ">Li Dong</a><sup>1</sup></span>
+      <span class="author"><a href="https://scholar.google.com/citations?user=G-V1VpwAAAAJ">Furu Wei</a><sup>1</sup></span>
     </p>
     <p class="affil"><sup>1</sup>Microsoft Research &nbsp;&nbsp; <sup>2</sup>University of Amsterdam</p>
     <p class="notes"><sup>*</sup>Equal contribution &nbsp;&nbsp; <sup>†</sup>Work done during an internship at Microsoft</p>
